@@ -1,4 +1,4 @@
-import { TaskStatus } from '../tasks.model';
+import { TaskStatus } from '../tasks-status.enum';
 import { IsEnum, IsString, IsOptional } from 'class-validator';
 // eslint-disable-next-line prettier/prettier
 

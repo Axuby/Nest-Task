@@ -7,6 +7,6 @@ import { TasksService } from './tasks.service';
 @Module({
   imports: [TypeOrmModule.forFeature([TaskRepository])], //For injecting dependency anywhere we need it in the module
   controllers: [TasksController],
-  providers: [TasksService],
+  providers: [TasksService, TaskRepository],
 })
 export class TasksModule {}
