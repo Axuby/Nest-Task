@@ -6,10 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { type } from 'os';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { User } from './auth/user.entity';
+import { Task } from './tasks/task.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
     TasksModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -18,7 +19,10 @@ import { AuthModule } from './auth/auth.module';
       username: 'postgres',
       password: 'root',
       database: 'task-management',
-      autoLoadEntities: true, //load defined entity files
+      entities: [User, Task],
+      migrations: ['src/migration/*.ts'],
+      subscribers: [],
+      autoLoadEntities: true,
       synchronize: true,
     }),
     AuthModule,
