@@ -7,7 +7,7 @@ import { NotFoundException } from '@nestjs/common/exceptions';
 import { TaskRepository } from './task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './task.entity';
-import {User} from 'src/auth/user.entity'
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class TasksService {
@@ -16,12 +16,12 @@ export class TasksService {
     private readonly taskRepository: TaskRepository,
   ) {}
 
-  getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return this.taskRepository.getTasks(filterDto);
+  getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto, user);
   }
 
-  createTask(createTaskdto: CreateTaskDto,user:User): Promise<Task> {
-    return this.taskRepository.createTask(createTaskdto,user);
+  createTask(createTaskdto: CreateTaskDto, user: User): Promise<Task> {
+    return this.taskRepository.createTask(createTaskdto, user);
   }
   // createTask(createTaskdto: CreateTaskDto): Task {
   //   const { title, description } = createTaskdto;
@@ -36,11 +36,15 @@ export class TasksService {
   //   return task;
   // }
 
-  async getTaskById(id: string): Promise<Task> {
+  async getTaskById(id: string, user: User): Promise<Task> {
     let task;
     try {
       task = await this.taskRepository.findOne({ where: { id } });
-      return task;
+      if (task.user == user) {
+        return task;
+      } else {
+        throw new NotFoundException(`Task with ID ${id} not found`);
+      }
     } catch (error) {
       console.log(error.code);
       if (!task) {
@@ -54,7 +58,7 @@ export class TasksService {
   //   if (!task) throw new NotFoundException(`Task with ${id} not found`);
   //   return task;
   // }
-  async deleteTaskById(id: string): Promise<void> {
+  async deleteTaskById(id: string, user: User): Promise<void> {
     const result = await this.taskRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID ${id} not found`);
@@ -65,14 +69,14 @@ export class TasksService {
     // // this.tasks.splice(index);
     // return;
   }
-  async updateTask(id: string, status: TaskStatus): Promise<Task> {
+  async updateTask(id: string, status: TaskStatus, user: User): Promise<Task> {
     console.log('Update');
-    const task = await this.getTaskById(id);
+    const task = await this.getTaskById(id, user);
     task.status = status;
     try {
       await this.taskRepository.save(task);
     } catch (error) {
-      console.log(error.code)
+      console.log(error.code);
     }
     return task;
   }

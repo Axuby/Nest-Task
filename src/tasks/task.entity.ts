@@ -1,7 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne , BaseEntity } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  BaseEntity,
+} from 'typeorm';
 import { TaskStatus } from './tasks-status.enum';
-import {User} from 'src/auth/user.entity'
-import {Exclude} from 'class-transformer';
+import { User } from 'src/auth/user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Task extends BaseEntity {
@@ -17,7 +23,7 @@ export class Task extends BaseEntity {
   @Column()
   status: TaskStatus;
 
-@ManyToOne(type => User, (user) =>  user.tasks, {eager:false})
-@Exclude({toPlainOnly:true})
-  user:User;
+  @ManyToOne((type) => User, (user) => user.tasks, { eager: false })
+  @Exclude({ toPlainOnly: true })
+  user: User;
 }
